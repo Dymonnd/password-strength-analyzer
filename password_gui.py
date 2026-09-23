@@ -2,6 +2,8 @@
 import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
+import secrets
+import string
 
 
 # Load common passwords
@@ -112,11 +114,70 @@ def toggle_password():
         password_entry.config(show="*")
 
 
+# Generate a secure password
+def generate_password():
+
+    length = 18
+
+    uppercase = string.ascii_uppercase
+    lowercase = string.ascii_lowercase
+    numbers = string.digits
+    symbols = "!@#$%^&*"
+
+    all_characters = uppercase + lowercase + numbers + symbols
+
+    # Ensure at least one character from each category
+    password = [
+        secrets.choice(uppercase),
+        secrets.choice(lowercase),
+        secrets.choice(numbers),
+        secrets.choice(symbols)
+    ]
+
+    # Fill the remaining characters
+    for _ in range(length - 4):
+        password.append(secrets.choice(all_characters))
+
+    # Shuffle the characters
+    secrets.SystemRandom().shuffle(password)
+
+    generated_password = "".join(password)
+
+    # Display the generated password
+    password_entry.delete(0, tk.END)
+    password_entry.insert(0, generated_password)
+
+    # Automatically analyse it
+    analyze_password()
+
+    copy_status_label.config(text="")
+
+
+# Copy password to clipboard
+def copy_password():
+
+    password = password_entry.get()
+
+    if not password:
+        copy_status_label.config(
+            text="Generate or enter a password first.",
+            fg="#f59e0b"
+        )
+        return
+
+    root.clipboard_clear()
+    root.clipboard_append(password)
+
+    copy_status_label.config(
+        text="Password copied to clipboard!",
+        fg="#22c55e"
+    )
+
 # Main application window
 root = tk.Tk()
 
 root.title("Password Strength Analyser")
-root.geometry("520x520")
+root.geometry("520x680")
 root.configure(bg="#111827")
 root.resizable(False, False)
 
@@ -173,6 +234,47 @@ show_checkbox = tk.Checkbutton(
 
 show_checkbox.pack()
 
+
+# Password generator button
+generate_button = tk.Button(
+    root,
+    text="GENERATE PASSWORD",
+    command=generate_password,
+    bg="#3b82f6",
+    fg="white",
+    font=("Arial", 11, "bold"),
+    width=25,
+    height=2
+)
+
+generate_button.pack(pady=10)
+
+
+# Copy password button
+copy_button = tk.Button(
+    root,
+    text="COPY PASSWORD",
+    command=copy_password,
+    bg="#374151",
+    fg="white",
+    font=("Arial", 11, "bold"),
+    width=25,
+    height=2
+)
+
+copy_button.pack(pady=5)
+
+
+# Clipboard status message
+copy_status_label = tk.Label(
+    root,
+    text="",
+    font=("Arial", 10),
+    bg="#111827",
+    fg="#22c55e"
+)
+
+copy_status_label.pack(pady=5)
 
 # Analyse button
 analyse_button = tk.Button(
