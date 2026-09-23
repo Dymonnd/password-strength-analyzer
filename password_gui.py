@@ -117,7 +117,7 @@ def toggle_password():
 # Generate a secure password
 def generate_password():
 
-    length = 18
+    length = password_length.get()
 
     uppercase = string.ascii_uppercase
     lowercase = string.ascii_lowercase
@@ -177,7 +177,7 @@ def copy_password():
 root = tk.Tk()
 
 root.title("Password Strength Analyser")
-root.geometry("520x680")
+root.geometry("520x740")
 root.configure(bg="#111827")
 root.resizable(False, False)
 
@@ -234,6 +234,27 @@ show_checkbox = tk.Checkbutton(
 
 show_checkbox.pack()
 
+
+# Password length selection
+password_length = tk.IntVar(value=18)
+
+length_slider = tk.Scale(
+    root,
+    from_=12,
+    to=32,
+    orient="horizontal",
+    variable=password_length,
+    label="Password Length",
+    bg="#111827",
+    fg="white",
+    troughcolor="#374151",
+    activebackground="#22c55e",
+    highlightthickness=0,
+    font=("Arial", 10, "bold"),
+    length=300
+)
+
+length_slider.pack(pady=10)
 
 # Password generator button
 generate_button = tk.Button(
